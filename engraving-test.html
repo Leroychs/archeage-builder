@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест интерфейса ArcheAge</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: white;
+            width: 1920px;
+            height: 1000px;
+            overflow: hidden;
+            position: relative;
+        }
+        .armor-slots {
+            position: absolute;
+            left: 787px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+        .armor-slot {
+            width: 64px;
+            height: 64px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .equipped-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 64px;
+            height: 64px;
+            pointer-events: none;
+        }
+        
+        .equipped-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 64px;
+            height: 64px;
+            pointer-events: none;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #2a2a2a;
+            border-radius: 10px;
+            padding: 20px;
+            width: min(400px, 90vw);
+            max-height: 80vh;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #item-options {
+            max-height: 60vh;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        
+        #item-options::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        #item-options::-webkit-scrollbar-track {
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+        
+        #item-options::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+        
+        #item-options::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+        
+        .item-option {
+            background: #3a3a3a;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .item-option:hover {
+            background: #4a4a4a;
+            border-color: #ffd700;
+        }
+        
+        .item-image {
+            width: 32px;
+            height: 32px;
+            margin-right: 10px;
+        }
+        
+        .engraving-slot {
+            width: 32px;
+            height: 32px;
+            border: 2px solid #555;
+            margin: 2px;
+            display: inline-block;
+            cursor: pointer;
+            background: #333;
+            background-size: cover;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-weight: bold;
+            transition: border-color 0.2s;
+        }
+        
+        .engraving-slot:hover {
+            border-color: #ffd700;
+        }
+        
+        .tier-tab {
+            padding: 8px 16px;
+            margin-right: 5px;
+            background: #333;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .tier-tab:hover {
+            background: #555;
+        }
+        
+        .tier-tab.active {
+            background: #4a4a4a;
+            border: 1px solid #ffd700;
+        }
+        
+        .character-panel {
+            position: absolute;
+            left: 354px;
+            top: 173px;
+            width: 380px;
+            height: 517px;
+            background: #121D35;
+            cursor: move;
+            user-select: none;
+        }
+        
+        .character-panel-header {
+            color: #C3F4FF;
+            font-family: FrizQuadrataCTT;
+            font-size: 16px;
+            margin: 16px 87.5px 0 87.5px;
+            text-align: center;
+        }
+        
+        .stats-box {
+            position: absolute;
+            top: 56px;
+            left: 20px;
+            width: 340px;
+            height: 56px;
+            background: linear-gradient(to bottom, #172F64 0%, #1A2742 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="character-panel">
+        <div class="character-panel-header">Характеристики персонажа</div>
+        <div class="stats-box"></div>
+    </div>
+    <div class="armor-slots">
+        <div style="position: relative;">
+            <img src="interface/armor_ui/slot1.png" alt="Шлем" class="armor-slot" onclick="openItemModal('helmets', 0)">
+            <div id="slot-0"></div>
+        </div>
+        <div style="position: relative;">
+            <img src="interface/armor_ui/slot2.png" alt="Нагрудник" class="armor-slot" onclick="openItemModal('bodyArmor', 1)">
+            <div id="slot-1"></div>
+        </div>
+        <div style="position: relative;">
+            <img src="interface/armor_ui/slot3.png" alt="Пояс" class="armor-slot" onclick="openItemModal('belts', 2)">
+            <div id="slot-2"></div>
+        </div>
+        <div style="position: relative;">
+            <img src="interface/armor_ui/slot4.png" alt="Наручи" class="armor-slot" onclick="openItemModal('bracers', 3)">
+            <div id="slot-3"></div>
+        </div>
+        <div style="position: relative;">
+            <img src="interface/armor_ui/slot5.png" alt="Перчатки" class="armor-slot" onclick="openItemModal('gloves', 4)">
+            <div id="slot-4"></div>
+        </div>
+        <div style="position: relative;">
+            <img src="interface/armor_ui/slot6.png" alt="Штаны" class="armor-slot" onclick="openItemModal('legguards', 5)">
+            <div id="slot-5"></div>
+        </div>
+        <div style="position: relative;">
+            <img src="interface/armor_ui/slot7.png" alt="Ботинки" class="armor-slot" onclick="openItemModal('boots', 6)">
+            <div id="slot-6"></div>
+        </div>
+    </div>
+    
+    <div id="item-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title">Выберите предмет</h3>
+            <div id="grade-selector" style="display: none; margin-bottom: 15px;">
+                <label style="color: #fff; margin-right: 10px;">Грейд:</label>
+                <select id="grade-select" onchange="updateItemGrades()" style="padding: 5px; background: #3a3a3a; color: #fff; border: 1px solid #555; border-radius: 3px;">
+                    <option value="common">Обычный</option>
+                    <option value="uncommon">Необычный</option>
+                    <option value="rare">Редкий</option>
+                    <option value="unique">Уникальный</option>
+                    <option value="epic">Эпический</option>
+                    <option value="legendary">Легендарный</option>
+                    <option value="relic">Реликвия</option>
+                    <option value="wonders">Эпоха чудес</option>
+                    <option value="tales">Эпоха сказаний</option>
+                    <option value="legends">Эпоха легенд</option>
+                    <option value="myths">Эпоха мифов</option>
+                    <option value="twelve">Эпоха Двенадцати</option>
+                </select>
+            </div>
+            <div id="item-details" style="display: none;"></div>
+            <div id="engraving-tabs" style="display: none; margin-bottom: 15px;">
+                <button class="tier-tab active" onclick="showEngravingTier('t1')" style="padding: 8px 16px; margin-right: 5px; background: #4a4a4a; color: #fff; border: none; border-radius: 3px; cursor: pointer;">Тир 1</button>
+                <button class="tier-tab" onclick="showEngravingTier('t2')" style="padding: 8px 16px; margin-right: 5px; background: #333; color: #fff; border: none; border-radius: 3px; cursor: pointer;">Тир 2</button>
+                <button class="tier-tab" onclick="showEngravingTier('t3')" style="padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 3px; cursor: pointer;">Тир 3</button>
+            </div>
+            <div id="item-options"></div>
+            <button onclick="closeModal()" style="margin-top: 10px; padding: 10px; background: #666; color: #fff; border: none; border-radius: 5px;">Закрыть</button>
+        </div>
+    </div>
+    <script src="data.js"></script>
+    <script>
+        let currentItemType = '';
+        
+        function openItemModal(itemType, slotIndex) {
+            currentSlotIndex = slotIndex;
+            currentItemType = itemType;
+            const modal = document.getElementById('item-modal');
+            
+            // Проверяем, есть ли экипированный предмет
+            if (equippedItems[slotIndex]) {
+                showItemDetails(equippedItems[slotIndex]);
+            } else {
+                showItemSelection(itemType);
+            }
+            
+            modal.style.display = 'block';
+        }
+        
+        function showItemSelection(itemType) {
+            const title = document.getElementById('modal-title');
+            const gradeSelector = document.getElementById('grade-selector');
+            const itemDetails = document.getElementById('item-details');
+            const engravingTabs = document.getElementById('engraving-tabs');
+            
+            const typeNames = {
+                helmets: 'Шлемы',
+                bodyArmor: 'Нагрудники',
+                belts: 'Пояса',
+                bracers: 'Наручи',
+                gloves: 'Перчатки',
+                legguards: 'Поножи',
+                boots: 'Обувь'
+            };
+            
+            title.textContent = `Выберите ${typeNames[itemType].toLowerCase()}`;
+            gradeSelector.style.display = 'block';
+            itemDetails.style.display = 'none';
+            engravingTabs.style.display = 'none';
+            document.getElementById('grade-select').value = 'common';
+            
+            updateItemList();
+        }
+        
+        function showItemDetails(equippedItem) {
+            const title = document.getElementById('modal-title');
+            const gradeSelector = document.getElementById('grade-selector');
+            const itemDetails = document.getElementById('item-details');
+            const options = document.getElementById('item-options');
+            
+            title.textContent = 'Подробности предмета';
+            gradeSelector.style.display = 'none';
+            options.innerHTML = '';
+            itemDetails.style.display = 'block';
+            
+            const item = equippedItem.item;
+            const gradeData = itemGrades[item.grade];
+            const stats = item.gradeStats ? item.gradeStats[item.grade] : { defense: item.stats?.defense || 0, resistance: item.stats?.resistance || 0 };
+            const slotsCount = getEngravingSlots(item.type, item.grade);
+            
+            let engravingSlots = '';
+            for (let i = 0; i < slotsCount; i++) {
+                const engraving = item.engravings && item.engravings[i];
+                const bgStyle = engraving ? `background-image: url('${engraving.image}');` : '';
+                engravingSlots += `
+                    <div class="engraving-slot" onclick="openEngravingModal(${i})" style="${bgStyle}">
+                        ${!engraving ? '+' : ''}
+                    </div>
+                `;
+            }
+            
+            itemDetails.innerHTML = `
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <div style="position: relative; margin-right: 15px;">
+                        <img src="${item.image}" style="width: 64px; height: 64px;">
+                        <img src="${gradeData.frame}" style="position: absolute; top: 0; left: 0; width: 64px; height: 64px;">
+                    </div>
+                    <div>
+                        <div style="color: ${gradeData.color}; font-weight: bold; font-size: 16px;">${item.name}</div>
+                        <div style="color: #ccc; margin-top: 5px;">Защита: ${stats.defense} | Сопротивление: ${stats.resistance}</div>
+                        <div style="color: #ccc; margin-top: 5px;">Слоты гравировок: ${slotsCount}</div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="color: #fff; margin-bottom: 10px;">Гравировки:</div>
+                    <div style="display: flex; flex-wrap: wrap;">${engravingSlots}</div>
+                </div>
+                <button onclick="removeEquippedItem()" style="width: 100%; padding: 10px; background: #d32f2f; color: #fff; border: none; border-radius: 5px; margin-bottom: 10px;">Удалить предмет</button>
+            `;
+        }
+        
+        function updateItemGrades() {
+            updateItemList();
+        }
+        
+        function updateItemList() {
+            const options = document.getElementById('item-options');
+            const items = itemsDatabase[currentItemType] || {};
+            const selectedGrade = document.getElementById('grade-select').value;
+            let optionsHtml = '';
+            
+            // Добавляем опцию снять предмет
+            if (equippedItems[currentSlotIndex]) {
+                optionsHtml += `<div class="item-option" onclick="removeEquippedItem()" style="border-color: #ff4444;">
+                    <div style="width: 32px; height: 32px; margin-right: 10px; background: #ff4444; border-radius: 3px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">X</div>
+                    <div>
+                        <div style="color: #ff4444; font-weight: bold;">Снять предмет</div>
+                    </div>
+                </div>`;
+            }
+            
+            optionsHtml += Object.entries(items).map(([key, item]) => {
+                // Используем выбранный грейд для всех типов брони
+                const itemGrade = selectedGrade;
+                const gradeData = itemGrades[itemGrade];
+                
+                // Получаем статистики по грейду
+                let defense, resistance;
+                if (item.gradeStats && item.gradeStats[itemGrade]) {
+                    defense = item.gradeStats[itemGrade].defense;
+                    resistance = item.gradeStats[itemGrade].resistance;
+                } else if (item.stats) {
+                    defense = item.stats.defense;
+                    resistance = item.stats.resistance;
+                } else {
+                    defense = 0;
+                    resistance = 0;
+                }
+                
+                return `<div class="item-option" onclick="selectItem('${currentItemType}', '${key}', '${itemGrade}')">
+                    <div style="position: relative; display: inline-block;">
+                        <img src="${item.image}" class="item-image">
+                        <img src="${gradeData.frame}" style="position: absolute; top: 0; left: 0; width: 32px; height: 32px; pointer-events: none;">
+                    </div>
+                    <div>
+                        <div style="color: ${gradeData.color}; font-weight: bold;">${item.name}</div>
+                        <div style="font-size: 12px; color: #ccc;">Защита: ${defense} | Сопротивление: ${resistance}</div>
+                    </div>
+                </div>`;
+            }).join('');
+            
+            options.innerHTML = optionsHtml;
+        }
+        
+        let currentSlotIndex = 0;
+        let equippedItems = [null, null, null, null, null, null, null];
+        
+        function selectItem(itemType, itemKey, customGrade) {
+            const item = itemsDatabase[itemType][itemKey];
+            const finalGrade = customGrade || item.grade;
+            const gradeData = itemGrades[finalGrade];
+            
+            const modifiedItem = {
+                ...item,
+                grade: finalGrade,
+                engravings: []
+            };
+            
+            equippedItems[currentSlotIndex] = {itemType, itemKey, item: modifiedItem};
+            
+            const slotElement = document.getElementById(`slot-${currentSlotIndex}`);
+            slotElement.innerHTML = `
+                <img src="${item.image}" class="equipped-item">
+                <img src="${gradeData.frame}" class="equipped-frame">
+            `;
+            
+            closeModal();
+        }
+        
+        let currentEngravingSlot = 0;
+        let currentTier = 't1';
+        
+        function openEngravingModal(slotIndex) {
+            currentEngravingSlot = slotIndex;
+            const title = document.getElementById('modal-title');
+            const gradeSelector = document.getElementById('grade-selector');
+            const itemDetails = document.getElementById('item-details');
+            const engravingTabs = document.getElementById('engraving-tabs');
+            
+            title.textContent = 'Выберите гравировку';
+            gradeSelector.style.display = 'none';
+            itemDetails.style.display = 'none';
+            engravingTabs.style.display = 'block';
+            
+            currentTier = 't1';
+            document.querySelectorAll('.tier-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelector('.tier-tab').classList.add('active');
+            
+            showEngravingTier('t1');
+        }
+        
+        function showEngravingTier(tier) {
+            currentTier = tier;
+            const options = document.getElementById('item-options');
+            
+            document.querySelectorAll('.tier-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            let optionsHtml = '';
+            const equippedItem = equippedItems[currentSlotIndex];
+            
+            if (equippedItem.item.engravings && equippedItem.item.engravings[currentEngravingSlot]) {
+                optionsHtml += `<div class="item-option" onclick="removeEngraving()" style="border-color: #ff4444;">
+                    <div style="width: 32px; height: 32px; margin-right: 10px; background: #ff4444; border-radius: 3px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">X</div>
+                    <div><div style="color: #ff4444; font-weight: bold;">Удалить гравировку</div></div>
+                </div>`;
+            }
+            
+            Object.entries(itemsDatabase.engravings).forEach(([key, engraving]) => {
+                const tierData = engraving.tiers[tier];
+                if (tierData) {
+                    const gradeData = itemGrades[tierData.grade];
+                    
+                    let statText = '';
+                    const statEntries = Object.entries(tierData).filter(([k, v]) => k !== 'image' && k !== 'grade');
+                    if (statEntries.length > 0) {
+                        const [statName, statValue] = statEntries[0];
+                        const statNames = {
+                            meleeAttack: 'Атака',
+                            rangedAttack: 'Дальн. атака',
+                            spellPower: 'Маг. сила',
+                            healingPower: 'Лечение',
+                            meleeCritDamage: 'Крит урон (ближн.)',
+                            rangedCritDamage: 'Крит урон (дальн.)',
+                            spellCritDamage: 'Крит урон (маг.)',
+                            healingCritPower: 'Крит лечение',
+                            armorPenetration: 'Пробивание брони',
+                            resistanceIgnore: 'Игнор сопротивления'
+                        };
+                        statText = `${statNames[statName] || statName}: +${statValue}`;
+                    }
+                    
+                    optionsHtml += `<div class="item-option" onclick="selectEngraving('${key}', '${tier}')">
+                        <img src="${tierData.image}" class="item-image">
+                        <div>
+                            <div style="color: ${gradeData.color}; font-weight: bold;">${engraving.name}</div>
+                            <div style="font-size: 12px; color: #ccc;">${statText}</div>
+                        </div>
+                    </div>`;
+                }
+            });
+            
+            options.innerHTML = optionsHtml;
+        }
+        
+        function selectEngraving(engravingKey, tierKey) {
+            const engraving = itemsDatabase.engravings[engravingKey];
+            const tier = engraving.tiers[tierKey];
+            
+            if (!equippedItems[currentSlotIndex].item.engravings) {
+                equippedItems[currentSlotIndex].item.engravings = [];
+            }
+            
+            equippedItems[currentSlotIndex].item.engravings[currentEngravingSlot] = {
+                ...tier,
+                name: engraving.name + ' (' + tierKey.toUpperCase() + ')'
+            };
+            
+            showItemDetails(equippedItems[currentSlotIndex]);
+        }
+        
+        function removeEngraving() {
+            if (equippedItems[currentSlotIndex].item.engravings) {
+                equippedItems[currentSlotIndex].item.engravings[currentEngravingSlot] = null;
+            }
+            showItemDetails(equippedItems[currentSlotIndex]);
+        }
+        
+        function removeEquippedItem() {
+            equippedItems[currentSlotIndex] = null;
+            const slotElement = document.getElementById(`slot-${currentSlotIndex}`);
+            slotElement.innerHTML = '';
+            closeModal();
+        }
+        
+
+        
+        function closeModal() {
+            document.getElementById('item-modal').style.display = 'none';
+        }
+        
+        // Перетаскивание панели персонажа
+        let isDragging = false;
+        let dragOffset = { x: 0, y: 0 };
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const characterPanel = document.querySelector('.character-panel');
+            
+            characterPanel.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                const rect = characterPanel.getBoundingClientRect();
+                dragOffset.x = e.clientX - rect.left;
+                dragOffset.y = e.clientY - rect.top;
+                e.preventDefault();
+            });
+            
+            document.addEventListener('mousemove', function(e) {
+                if (isDragging) {
+                    const x = e.clientX - dragOffset.x;
+                    const y = e.clientY - dragOffset.y;
+                    characterPanel.style.left = Math.max(0, Math.min(x, 1920 - 380)) + 'px';
+                    characterPanel.style.top = Math.max(0, Math.min(y, 1000 - 517)) + 'px';
+                }
+            });
+            
+            document.addEventListener('mouseup', function() {
+                isDragging = false;
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArcheAge Item Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .form-section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .stats-grid .form-group {
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .output-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .output-code {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .grade-stats {
+            margin-top: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .grade-row {
+            display: grid;
+            grid-template-columns: 100px 1fr 1fr 1fr auto;
+            gap: 10px;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .grade-row:last-child {
+            border-bottom: none;
+        }
+
+        .grade-name {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .auto-calc-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ArcheAge Item Editor</h1>
+            <p>Редактор предметов для базы данных ArcheAge</p>
+        </div>
+
+        <div class="content">
+            <div class="form-section">
+                <h2>Основная информация</h2>
+                
+                <div class="form-group">
+                    <label for="itemId">ID предмета:</label>
+                    <input type="number" id="itemId" placeholder="Введите ID">
+                </div>
+
+                <div class="form-group">
+                    <label for="itemName">Название предмета:</label>
+                    <input type="text" id="itemName" placeholder="Название предмета">
+                </div>
+
+                <div class="form-group">
+                    <label for="itemType">Тип предмета:</label>
+                    <select id="itemType">
+                        <option value="">Выберите тип</option>
+                        <option value="helmets">Шлемы</option>
+                        <option value="bodyArmor">Нагрудники</option>
+                        <option value="belts">Пояса</option>
+                        <option value="bracers">Наручи</option>
+                        <option value="gloves">Перчатки</option>
+                        <option value="legguards">Поножи</option>
+                        <option value="boots">Сапоги</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="armorType">Тип брони:</label>
+                    <select id="armorType">
+                        <option value="">Выберите тип брони</option>
+                        <option value="plate">Латная</option>
+                        <option value="leather">Кожаная</option>
+                        <option value="cloth">Матерчатая</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemImage">Путь к изображению:</label>
+                    <input type="text" id="itemImage" placeholder="path/to/image.png">
+                </div>
+
+                <div class="form-group">
+                    <label for="itemGrade">Базовый грейд:</label>
+                    <select id="itemGrade">
+                        <option value="common">Обычный</option>
+                        <option value="uncommon">Необычный</option>
+                        <option value="rare">Редкий</option>
+                        <option value="unique">Уникальный</option>
+                        <option value="epic">Эпический</option>
+                        <option value="legendary">Легендарный</option>
+                        <option value="relic">Реликвия</option>
+                        <option value="wonders">Эпоха чудес</option>
+                        <option value="tales">Эпоха сказаний</option>
+                        <option value="legends">Эпоха легенд</option>
+                        <option value="myths">Эпоха мифов</option>
+                        <option value="twelve">Эпоха Двенадцати</option>
+                    </select>
+                </div>
+
+                <h2>Статы Common грейда</h2>
+                
+                <div class="stats-grid">
+                    <div class="form-group">
+                        <label for="defense">Защита:</label>
+                        <input type="number" id="defense" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="resistance">Сопротивление:</label>
+                        <input type="number" id="resistance" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="equipmentRating">Рейтинг снаряжения:</label>
+                        <input type="number" id="equipmentRating" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="stamina">Выносливость:</label>
+                        <input type="number" id="stamina" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="strength">Сила:</label>
+                        <input type="number" id="strength" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="agility">Ловкость:</label>
+                        <input type="number" id="agility" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="intellect">Интеллект:</label>
+                        <input type="number" id="intellect" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="spirit">Дух:</label>
+                        <input type="number" id="spirit" placeholder="0">
+                    </div>
+                </div>
+
+                <div class="auto-calc-controls">
+                    <button type="button" class="btn" onclick="autoCalculateStats()">Автоматический расчет статов</button>
+                    <button type="button" class="btn btn-secondary" onclick="clearForm()">Очистить форму</button>
+                </div>
+            </div>
+
+            <div class="output-section">
+                <h2>Результат</h2>
+                
+                <div class="grade-stats" id="gradeStats">
+                    <h3>Статы по грейдам</h3>
+                    <div id="gradeStatsContent">
+                        <p>Заполните базовые статы и нажмите "Автоматический расчет статов"</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button type="button" class="btn btn-success" onclick="generateCode()">Генерировать код</button>
+                    <button type="button" class="btn btn-secondary" onclick="copyToClipboard()">Копировать в буфер</button>
+                </div>
+
+                <div class="output-code" id="outputCode">
+                    // Здесь будет сгенерированный код
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Паттерны для расчета статов
+        const gradeMultipliers = {
+            defense: {
+                common: 1.0,
+                uncommon: 1.05,
+                rare: 1.1,
+                unique: 1.15,
+                epic: 1.2,
+                legendary: 1.25,
+                relic: 1.35,
+                wonders: 1.5,
+                tales: 1.7,
+                legends: 1.9,
+                myths: 2.0,
+                twelve: 2.1
+            },
+            equipmentRating: {
+                common: 1.0,
+                uncommon: 1.05,
+                rare: 1.1,
+                unique: 1.15,
+                epic: 1.2,
+                legendary: 1.25,
+                relic: 1.35,
+                wonders: 1.5,
+                tales: 1.7,
+                legends: 1.9,
+                myths: 2.0,
+                twelve: 2.1
+            },
+            stats: {
+                common: 1.0,
+                uncommon: 1.07,
+                rare: 1.17,
+                unique: 1.24,
+                epic: 1.34,
+                legendary: 1.41,
+                relic: 1.52,
+                wonders: 1.62,
+                tales: 1.72,
+                legends: 1.86,
+                myths: 2.03,
+                twelve: 2.14
+            }
+        };
+
+        const grades = ['common', 'uncommon', 'rare', 'unique', 'epic', 'legendary', 'relic', 'wonders', 'tales', 'legends', 'myths', 'twelve'];
+
+        function autoCalculateStats() {
+            const baseDefense = parseInt(document.getElementById('defense').value) || 0;
+            const baseResistance = parseInt(document.getElementById('resistance').value) || 0;
+            const baseEquipmentRating = parseFloat(document.getElementById('equipmentRating').value) || 0;
+            const baseStamina = parseInt(document.getElementById('stamina').value) || 0;
+            const baseStrength = parseInt(document.getElementById('strength').value) || 0;
+            const baseAgility = parseInt(document.getElementById('agility').value) || 0;
+            const baseIntellect = parseInt(document.getElementById('intellect').value) || 0;
+            const baseSpirit = parseInt(document.getElementById('spirit').value) || 0;
+
+            const armorType = document.getElementById('armorType').value;
+            
+            let html = '<div class="grade-row"><div class="grade-name">Грейд</div><div>Защита</div><div>Сопротивление</div><div>Рейтинг</div><div>Доп. статы</div></div>';
+            
+            grades.forEach(grade => {
+                let defense, resistance;
+                
+                // Расчет защиты и сопротивления в зависимости от типа брони
+                if (armorType === 'plate') {
+                    defense = Math.round(baseDefense * gradeMultipliers.defense[grade]);
+                    resistance = Math.round(baseResistance * gradeMultipliers.defense[grade]);
+                } else if (armorType === 'leather') {
+                    defense = Math.round(baseDefense * gradeMultipliers.defense[grade]);
+                    resistance = defense; // Для кожаной брони защита = сопротивлению
+                } else if (armorType === 'cloth') {
+                    defense = Math.round(baseDefense * gradeMultipliers.defense[grade]);
+                    resistance = Math.round(baseResistance * gradeMultipliers.defense[grade]);
+                } else {
+                    defense = Math.round(baseDefense * gradeMultipliers.defense[grade]);
+                    resistance = Math.round(baseResistance * gradeMultipliers.defense[grade]);
+                }
+                
+                const equipmentRating = (baseEquipmentRating * gradeMultipliers.equipmentRating[grade]).toFixed(2);
+                
+                // Расчет дополнительных статов
+                let additionalStats = [];
+                if (baseStamina > 0) {
+                    additionalStats.push(`stamina: ${Math.round(baseStamina * gradeMultipliers.stats[grade])}`);
+                }
+                if (baseStrength > 0) {
+                    additionalStats.push(`strength: ${Math.round(baseStrength * gradeMultipliers.stats[grade])}`);
+                }
+                if (baseAgility > 0) {
+                    additionalStats.push(`agility: ${Math.round(baseAgility * gradeMultipliers.stats[grade])}`);
+                }
+                if (baseIntellect > 0) {
+                    additionalStats.push(`intellect: ${Math.round(baseIntellect * gradeMultipliers.stats[grade])}`);
+                }
+                if (baseSpirit > 0) {
+                    additionalStats.push(`spirit: ${Math.round(baseSpirit * gradeMultipliers.stats[grade])}`);
+                }
+                
+                html += `<div class="grade-row">
+                    <div class="grade-name">${grade}</div>
+                    <div>${defense}</div>
+                    <div>${resistance}</div>
+                    <div>${equipmentRating}</div>
+                    <div>${additionalStats.join(', ')}</div>
+                </div>`;
+            });
+            
+            document.getElementById('gradeStatsContent').innerHTML = html;
+        }
+
+        function generateCode() {
+            const itemId = document.getElementById('itemId').value;
+            const itemName = document.getElementById('itemName').value;
+            const itemType = document.getElementById('itemType').value;
+            const armorType = document.getElementById('armorType').value;
+            const itemImage = document.getElementById('itemImage').value;
+            const itemGrade = document.getElementById('itemGrade').value;
+            
+            const baseDefense = parseInt(document.getElementById('defense').value) || 0;
+            const baseResistance = parseInt(document.getElementById('resistance').value) || 0;
+            const baseEquipmentRating = parseFloat(document.getElementById('equipmentRating').value) || 0;
+            const baseStamina = parseInt(document.getElementById('stamina').value) || 0;
+            const baseStrength = parseInt(document.getElementById('strength').value) || 0;
+            const baseAgility = parseInt(document.getElementById('agility').value) || 0;
+            const baseIntellect = parseInt(document.getElementById('intellect').value) || 0;
+            const baseSpirit = parseInt(document.getElementById('spirit').value) || 0;
+
+            if (!itemName || !itemType || !itemId) {
+                alert('Заполните обязательные поля: ID, название и тип предмета');
+                return;
+            }
+
+            let code = `        ${generateVariableName(itemName)}: {
+            id: ${itemId},
+            name: "${itemName}",
+            type: "${itemType}",
+            image: "${itemImage}",
+            grade: "${itemGrade}",
+            gradeStats: {\n`;
+
+            grades.forEach(grade => {
+                let defense, resistance;
+                
+                if (armorType === 'plate') {
+                    defense = Math.round(baseDefense * gradeMultipliers.defense[grade]);
+                    resistance = Math.round(baseResistance * gradeMultipliers.defense[grade]);
+                } else if (armorType === 'leather') {
+                    defense = Math.round(baseDefense * gradeMultipliers.defense[grade]);
+                    resistance = defense;
+                } else if (armorType === 'cloth') {
+                    defense = Math.round(baseDefense * gradeMultipliers.defense[grade]);
+                    resistance = Math.round(baseResistance * gradeMultipliers.defense[grade]);
+                } else {
+                    defense = Math.round(baseDefense * gradeMultipliers.defense[grade]);
+                    resistance = Math.round(baseResistance * gradeMultipliers.defense[grade]);
+                }
+                
+                const equipmentRating = (baseEquipmentRating * gradeMultipliers.equipmentRating[grade]).toFixed(2);
+                
+                let statsObj = `{ defense: ${defense}, resistance: ${resistance}, equipmentRating: ${equipmentRating}`;
+                
+                if (baseStamina > 0) {
+                    statsObj += `, stamina: ${Math.round(baseStamina * gradeMultipliers.stats[grade])}`;
+                }
+                if (baseStrength > 0) {
+                    statsObj += `, strength: ${Math.round(baseStrength * gradeMultipliers.stats[grade])}`;
+                }
+                if (baseAgility > 0) {
+                    statsObj += `, agility: ${Math.round(baseAgility * gradeMultipliers.stats[grade])}`;
+                }
+                if (baseIntellect > 0) {
+                    statsObj += `, intellect: ${Math.round(baseIntellect * gradeMultipliers.stats[grade])}`;
+                }
+                if (baseSpirit > 0) {
+                    statsObj += `, spirit: ${Math.round(baseSpirit * gradeMultipliers.stats[grade])}`;
+                }
+                
+                statsObj += ' }';
+                
+                code += `                ${grade}: ${statsObj}`;
+                if (grade !== 'twelve') {
+                    code += ',';
+                }
+                code += '\n';
+            });
+
+            code += `            },
+            engravingSlots: 0
+        }`;
+
+            document.getElementById('outputCode').textContent = code;
+        }
+
+        function generateVariableName(itemName) {
+            return itemName
+                .toLowerCase()
+                .replace(/[а-я]/g, function(match) {
+                    const cyrillicToLatin = {
+                        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo',
+                        'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+                        'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+                        'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
+                        'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
+                    };
+                    return cyrillicToLatin[match] || match;
+                })
+                .replace(/[^a-z0-9]/g, '')
+                .replace(/^(\d)/, '_$1'); // Если начинается с цифры, добавляем подчеркивание
+        }
+
+        function copyToClipboard() {
+            const code = document.getElementById('outputCode').textContent;
+            if (!code || code === '// Здесь будет сгенерированный код') {
+                alert('Сначала сгенерируйте код');
+                return;
+            }
+            
+            navigator.clipboard.writeText(code).then(() => {
+                alert('Код скопирован в буфер обмена');
+            }).catch(() => {
+                alert('Ошибка при копировании');
+            });
+        }
+
+        function clearForm() {
+            document.querySelectorAll('input, select, textarea').forEach(element => {
+                if (element.type === 'checkbox') {
+                    element.checked = false;
+                } else if (element.id !== 'itemId') { // Не очищаем ID
+                    element.value = '';
+                }
+            });
+
+            document.getElementById('gradeStatsContent').innerHTML = '<p>Заполните базовые статы и нажмите "Автоматический расчет статов"</p>';
+            document.getElementById('outputCode').textContent = '// Здесь будет сгенерированный код';
+        }
+
+        // Функция для автоматического генерирования ID
+        function generateNextId() {
+            const itemType = document.getElementById('itemType').value;
+            if (!itemType) return 1;
+            
+            // Максимальные ID по типам (актуальные значения из базы)
+            const maxIds = {
+                helmets: 20,
+                bodyArmor: 20,
+                belts: 20,
+                bracers: 20,
+                gloves: 15,
+                legguards: 15,
+                boots: 15
+            };
+            
+            return (maxIds[itemType] || 0) + 1;
+        }
+        
+        // Автоматический расчет при изменении полей
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const inputs = ['defense', 'resistance', 'equipmentRating', 'stamina', 'strength', 'agility', 'intellect', 'spirit'];
+            inputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', function() {
+                    if (this.value) {
+                        setTimeout(autoCalculateStats, 100);
+                    }
+                });
+            });
+            
+            document.getElementById('armorType').addEventListener('change', function() {
+                setTimeout(autoCalculateStats, 100);
+            });
+            
+
+        });
+    </script>
+</body>
+</html>
