@@ -101,7 +101,7 @@ flex-grow: 0;
 .hp-bar_hp_number {
 width: 65px;
 height: 12px;
-font-family: 'FrizQuadrataCTT';
+font-family: "FrizQuadrataCTT";
 font-style: normal;
 font-weight: 400;
 font-size: 10px;
@@ -133,7 +133,7 @@ flex-grow: 0;
 .hp-bar_mana_number {
 width: 65px;
 height: 12px;
-font-family: 'FrizQuadrataCTT';
+font-family: "FrizQuadrataCTT";
 font-style: normal;
 font-weight: 400;
 font-size: 10px;
@@ -158,7 +158,7 @@ line-height: 25px;
 color: #FFFFB2;
 }
 
-.left-block-head{
+.left-block-head {
     width: 205px;
     height: 20px;
     font-weight: 400;
@@ -363,7 +363,7 @@ z-index: 5;
 width: 150px;
 height: 15px;
 /* Main (Dark mode)/Body/Body 1 */
-font-family: 'FrizQuadrataCTT';
+font-family: "FrizQuadrataCTT";
 font-style: normal;
 font-weight: 400;
 font-size: 12px;

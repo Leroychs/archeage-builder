@@ -18,6 +18,7 @@
             position: relative;
             background: linear-gradient(180deg, #10182E 0%, #05020D 100%); 
             background-image: url(interface/background_main.png);
+            font-family: "FrizQuadrataCTT";
             background-position: center;
             background-repeat: no-repeat;
             background-size: 1920px 1000px;
@@ -66,11 +67,6 @@
             left: 172px;
         }
         .left-block {
-            position: absolute;
-            left: 252px;
-            top: 169px;
-            width: 412px;
-            height: 661px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -78,12 +74,19 @@
             padding: 16px 20px 24px;
             gap: 12px;
             isolation: isolate;
-            background: linear-gradient(180deg, #121D35 0%, #090E1B 100%);
-            font-family: "FrizQuadrataCTT";
-            font-style: normal;
-            cursor: move;
-            user-select: none;
+            position: absolute;
+            width: 424px;
+            height: 657px;
+            left: 252px;
+            top: 171px;
+            background: linear-gradient(180deg, rgba(18, 29, 53, 0.45) 0%, rgba(14, 5, 34, 0.45) 100%);
+            backdrop-filter: blur(8px);
+            border: #1F3674;
+            border-radius: 4px;
         }
+
+
+
 
         .left-block-head {
             cursor: move;
