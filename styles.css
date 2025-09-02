@@ -1256,7 +1256,7 @@ order: 6;
 }
 
 .right-block_attribute_block2_1_text1{
-width: 240px;
+width: 241px;
 height: 15px;
 font-family: 'FrizQuadrataCTT';
 font-style: normal;
@@ -1338,7 +1338,7 @@ order: 6;
 }
 
 .right-block_attribute_block3_1_text1{
-width: 240px;
+width: 241px;
 height: 15px;
 font-family: 'FrizQuadrataCTT';
 font-style: normal;
@@ -1420,7 +1420,7 @@ flex-grow: 0;
 }
 
 .right-block_attribute_block4_1_text2{
-width: 76px;
+width: 78px;
 height: 15px;
 font-family: 'FrizQuadrataCTT';
 font-style: normal;
@@ -2073,4 +2073,34 @@ color: #FFFFFF;
 flex: none;
 order: 1;
 flex-grow: 1;
+}
+
+/*  Правый блок характеристик, табы */
+
+/* Второй таб */
+.right-block {
+border: 2px solid;
+border-image: linear-gradient(180deg, #1F3674 0%, #270C51 100%) 1;
+}
+
+.right-block_tab2 {
+box-sizing: border-box;
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 16px 20px 24px;
+gap: 12px;
+isolation: isolate;
+position: absolute;
+width: 424px;
+height: 783px;
+left: 1244px;
+top: calc(50% - 783px/2 - 0.5px);
+background: linear-gradient(180deg, rgba(18, 29, 53, 0.75) 0%, rgba(14, 5, 34, 0.75) 100%);
+border-radius: 4px;
+}
+
+.right-block_attribute_block_1.block8 {
+    gap: 48px;
+    order: 7;
 }
