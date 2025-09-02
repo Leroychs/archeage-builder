@@ -2125,10 +2125,6 @@ z-index: 6;
 /*  Правый блок характеристик, табы experemental*/
 
 /* Второй таб */
-.right-block {
-
-}
-
 .right-block_tab2 {
 box-sizing: border-box;
 display: flex;
