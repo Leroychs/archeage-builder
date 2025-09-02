@@ -346,7 +346,7 @@
         <div class="right-block_tips">
             <div class="right-block_tips_text" onclick="toggleRightTips()">
                 <img src="interface/tips_arrow.png" class="right-block_tips_image_arrow" id="rightTipsArrow">
-                <div class="right-block_tips_text_hide" id="rightTipsText">Скрыть подсказки</div>
+                <div class="right-block_tips_text_hide" id="rightTipsText">Показать подсказки</div>
             </div>
             <div class="right_tips1">
                 <img src="interface/tip1.png" class="right_tips1_image">
@@ -503,11 +503,12 @@
                 <div class="right-block_attribute_block4_1_text2">931</div>
             </div>
         </div>
+        <!-- 
         <div class="right-block_line5"></div>
         <div class="right-block_tips">
-            <div class="right-block_tips_text" onclick="toggleRightTips()">
+            <div class="right-block_tips_text" onclick="toggleRightTips()" >
                 <img src="interface/tips_arrow.png" class="right-block_tips_image_arrow" id="rightTipsArrow">
-                <div class="right-block_tips_text_hide" id="rightTipsText">Скрыть подсказки</div>
+                <div class="right-block_tips_text_hide" id="rightTipsText"></div>
             </div>
             <div class="right_tips1">
                 <img src="interface/tip1.png" class="right_tips1_image">
@@ -517,7 +518,7 @@
                 <img src="interface/tip2.png" class="right_tips2_image">
                 <div class="right_tips2_text">Зажмите Alt и наведите курсор на характеристику, чтобы узнать подробнее об источниках её получения</div>
             </div>
-        </div>
+        </div>-->
     </div>
 
     <script>
@@ -576,17 +577,21 @@ function toggleRightTips() {
   const tips2 = document.querySelector('.right_tips2');
   const arrow = document.getElementById('rightTipsArrow');
   const text = document.getElementById('rightTipsText');
+  const rightBlock = document.querySelector('.right-block');
+  const rightTipsBlock = document.querySelector('.right-block_tips');
   
   if (tips1.style.display === 'none') {
     tips1.style.display = 'flex';
     tips2.style.display = 'flex';
     arrow.style.transform = 'rotate(0deg)';
     text.textContent = 'Скрыть подсказки';
+    rightBlock.style.height = '883px';
   } else {
     tips1.style.display = 'none';
     tips2.style.display = 'none';
     arrow.style.transform = 'rotate(180deg)';
     text.textContent = 'Показать подсказки';
+    rightBlock.style.height = '783px';
   }
 }
 
