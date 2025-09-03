@@ -39,12 +39,21 @@
     width: 44px;
     height: 44px;
     opacity: 0.6;
-    transition: filter 0.3s ease;
-     border-radius: 4px;
+    border-radius: 4px;
 }
 
 .slot:hover {
-    filter: drop-shadow(0px 0px 15px #505C95) drop-shadow(0px 0px 8px #505C95) drop-shadow(0px 0px 4px #505C95);
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    filter: drop-shadow(0px 0px 14.6168px #485E89) drop-shadow(0px 0px 8.35245px #485E89) 
+    drop-shadow(0px 0px 4.87226px #485E89) drop-shadow(0px 0px 2.43613px #485E89) 
+    drop-shadow(0px 0px 0.696037px #485E89) drop-shadow(0px 0px 0.348019px #485E89);
+    z-index: -1;
+}
+
+.slot1:hover {
+    
 }
 
 .slot-left {
@@ -268,9 +277,9 @@
     padding: 0px;
     gap: 8px;
     isolation: isolate;
-    width: 372px;
+    width: 384px;
     height: 56px;
-    background: linear-gradient(180deg, #172F64 0%, #1A2742 100%);
+    background: linear-gradient(180deg, rgba(23, 47, 100, 0.25) 0%, rgba(26, 39, 66, 0.25) 100%);
     flex: none;
     order: 1;
     align-self: stretch;
@@ -786,14 +795,16 @@ z-index: 6;
 }
 
 .left-block-main_other_stats_right {
-    margin: 0 auto;
-    width: 24px;
-    height: 24px;
+    width: 25px;
+    height: 27px;
     flex: none;
     order: 1;
     flex-grow: 0;
 }
 
+    .left-block-main_other_stats_right:hover {
+        content: url(interface/other_stats_button_hover.png);
+    }
 
 /* Логотип, середина экрана */
 .main-logo {
@@ -962,8 +973,10 @@ z-index: 6;
     height: 783px;
     left: 1244px;
     top: calc(50% - 783px/2 - 0.5px);
+    background: linear-gradient(180deg, rgba(18, 29, 53, 0.45) 0%, rgba(14, 5, 34, 0.45) 100%) padding-box;
     border: 2px solid;
     border-image: linear-gradient(180deg, #1F3674 0%, #270C51 100%) 1;
+    backdrop-filter: blur(8px);
 }
 
 .right-block_head_image {
@@ -1803,6 +1816,10 @@ z-index: 6;
     height: 404px;
     background: linear-gradient(180deg, rgba(18, 29, 53, 0.8) 0%, rgba(14, 5, 34, 0.8) 100%);
     backdrop-filter: blur(8px);
+    border: 2px solid;
+    border-image: linear-gradient(180deg, #1F3674 0%, #270C51 100%) 1;
+    
+
 }
 
 .title-block_header {
@@ -2146,3 +2163,53 @@ z-index: 6;
         gap: 48px;
         order: 7;
     }
+
+.left-slots {
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 8px;
+position: absolute;
+width: 44px;
+height: 520px;
+left: 0px;
+top: 68px;
+}
+
+.left-slots_slot1 {
+width: 44px;
+height: 44px;
+flex: none;
+order: 0;
+flex-grow: 0;
+transition: filter 0.3s ease;
+}
+
+.left-slots_slot1_head {
+    position: absolute;
+    height: 44px;
+    left: 0%;
+    right: 0%;
+    top: 0px;
+    opacity: 0.6;
+}
+
+.left-slots_slot1_head_image {
+    position: absolute;
+    height: 44px;
+    left: 0%;
+    right: 0%;
+    top: calc(50% - 44px/2);
+    border-radius: 4px;
+}
+
+.left-slots_slot1:hover {
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    filter: drop-shadow(0px 0px 14px #485E89) 
+    drop-shadow(0px 0px 8px #485E89) 
+    drop-shadow(0px 0px 2px #485E89);
+}
+
