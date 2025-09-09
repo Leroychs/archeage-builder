@@ -2633,7 +2633,6 @@ transition: filter 0.3s ease;
 .right-block_attribute_block_marker_text_tab2 {
     width: 34px;
     height: 15px;
-    font-family: 'FrizQuadrataCTT';
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
@@ -2644,17 +2643,28 @@ transition: filter 0.3s ease;
     flex-grow: 0;
 }
 
+
+
+
+
+
+
+
+
+
+
+
 /* Адаптивность */
 @media screen and (min-width: 3440px) {
     body {
         background-image: url(interface/background_2k.png) !important;
-        background-size: 3440px 1440px !important;
+        background-size: 3440px 1000px !important;
     }
     .left-block {
-        left: 400px;
+        left: 600px;
     }
     .right-block {
-        left: 2600px;
+        left: 2000px;
     }
     .center-block {
         left: calc(50% - 194px);
