@@ -2574,6 +2574,8 @@ transition: filter 0.3s ease;
     flex-grow: 0;
 }
 
+
+
 .right-block_attribute_block_1_tab2.block5 {
     order: 5;
 }
@@ -2643,7 +2645,23 @@ transition: filter 0.3s ease;
 }
 
 /* Адаптивность */
-@media screen and (min-width: 2560px) {
+@media screen and (min-width: 3440px) {
+    body {
+        background-image: url(interface/background_2k.png) !important;
+        background-size: 3440px 1440px !important;
+    }
+    .left-block {
+        left: 400px;
+    }
+    .right-block {
+        left: 2600px;
+    }
+    .center-block {
+        left: calc(50% - 194px);
+    }
+}
+
+@media screen and (min-width: 2560px) and (max-width: 3439px) {
     body {
         background-image: url(interface/background_2k.png) !important;
         background-size: 2560px 1000px !important;
